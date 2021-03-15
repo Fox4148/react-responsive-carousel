@@ -26,6 +26,7 @@ export interface Props {
     dynamicHeight?: boolean;
     emulateTouch?: boolean;
     infiniteLoop?: boolean;
+    draggeableThumbs?: boolean;
     interval: number;
     labels: {
         leftArrow: string;
@@ -56,6 +57,7 @@ export interface Props {
     showThumbs: boolean;
     statusFormatter: (currentItem: number, total: number) => string;
     stopOnHover: boolean;
+    draggeableThumbs: boolean;
     swipeable: boolean;
     swipeScrollTolerance: number;
     thumbWidth?: number;
@@ -166,6 +168,7 @@ export default class Carousel extends React.Component<Props, State> {
         showStatus: true,
         showThumbs: true,
         stopOnHover: true,
+        draggeableThumbs: false,
         swipeScrollTolerance: 5,
         swipeable: true,
         transitionTime: 350,
@@ -182,6 +185,7 @@ export default class Carousel extends React.Component<Props, State> {
             hasMount: false,
             isMouseEntered: false,
             autoPlay: props.autoPlay,
+            draggeable: props.draggeableThumbs,
             swiping: false,
             swipeMovementStarted: false,
             cancelClick: false,
@@ -796,7 +800,6 @@ export default class Carousel extends React.Component<Props, State> {
         if (!this.props.showThumbs || !this.props.children || Children.count(this.props.children) === 0) {
             return null;
         }
-
         return (
             <Thumbs
                 ref={this.setThumbsRef}
@@ -805,6 +808,7 @@ export default class Carousel extends React.Component<Props, State> {
                 transitionTime={this.props.transitionTime}
                 thumbWidth={this.props.thumbWidth}
                 labels={this.props.labels}
+                draggeable={this.props.draggeableThumbs}
             >
                 {this.props.renderThumbs(this.props.children)}
             </Thumbs>

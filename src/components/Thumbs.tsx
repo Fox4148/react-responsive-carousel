@@ -31,6 +31,7 @@ interface State {
     lastPosition: number;
     showArrows: boolean;
     swiping: boolean;
+    draggeable: boolean;
 }
 
 export default class Thumbs extends Component<Props, State> {
@@ -48,6 +49,7 @@ export default class Thumbs extends Component<Props, State> {
             item: 'slide item',
         },
         selectedItem: 0,
+        draggeable: false,
         thumbWidth: 80,
         transitionTime: 350,
     };
@@ -57,11 +59,16 @@ export default class Thumbs extends Component<Props, State> {
 
         this.state = {
             selectedItem: props.selectedItem,
+            draggeable: props.draggeable,
             swiping: false,
             showArrows: false,
             firstItem: 0,
             visibleItems: 0,
             lastPosition: 0,
+            pos1: 0,
+            pos2: 0,
+            pos3: 0,
+            pos4: 0,
         };
     }
 
@@ -238,9 +245,43 @@ export default class Thumbs extends Component<Props, State> {
         return firstItem;
     }
 
+    handleMouseDown(e, index, childrens) {
+        e = e || window.event;
+        console.log(childrens.relatedTarget);
+        e.preventDefault();
+        // get the mouse cursor position at startup:
+        this.state.pos3 = e.clientX;
+        this.state.pos4 = e.clientY;
+        document.onmouseup = () => this.closeDragElement();
+        // call a function whenever the cursor moves:
+        document.onmousemove = (c) => this.elementDrag(c, e.target);
+    }
+
+    elementDrag(e, elmnt) {
+        e = e || window.event;
+        e.preventDefault();
+        // calculate the new cursor position:
+        this.state.pos1 = this.state.pos3 - e.clientX;
+        this.state.pos2 = this.state.pos4 - e.clientY;
+        this.state.pos3 = e.clientX;
+        this.state.pos4 = e.clientY;
+        // set the element's new position:
+
+        console.log(elmnt);
+        console.log(e);
+        elmnt.style.top = elmnt.offsetTop - this.state.pos2 + 'px';
+        elmnt.style.left = elmnt.offsetLeft - this.state.pos1 + 'px';
+    }
+
+    closeDragElement() {
+        // stop moving when mouse button is released:
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }
+
     renderItems() {
         return this.props.children.map((img, index) => {
-            const itemClass = klass.ITEM(false, index === this.state.selectedItem);
+            const itemClass = klass.ITEM(false, index === this.state.selectedItem, this.state.draggeable);
 
             const thumbProps = {
                 key: index,
@@ -248,6 +289,7 @@ export default class Thumbs extends Component<Props, State> {
                 className: itemClass,
                 onClick: this.handleClickItem.bind(this, index, this.props.children[index]),
                 onKeyDown: this.handleClickItem.bind(this, index, this.props.children[index]),
+                onMouseDown: this.handleMouseDown.bind(this, index, this.props.children[index]),
                 'aria-label': `${this.props.labels.item} ${index + 1}`,
                 style: { width: this.props.thumbWidth },
             };

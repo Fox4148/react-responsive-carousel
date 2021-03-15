@@ -89,7 +89,8 @@
         @include transition(all, 0.15s, ease-in);
         // activate hardware accelerated animations using translate property
         @include enhanceAnimations();
-        position: relative;
+        position: absolute;
+        z-index: 9;
         list-style: none;
         white-space: nowrap;
     }
@@ -115,6 +116,10 @@
 
         img {
             vertical-align: top;
+        }
+        &.draggeable {
+            z-index: 10;
+            cursor: move;
         }
     }
 

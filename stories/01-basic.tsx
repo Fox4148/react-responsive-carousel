@@ -179,3 +179,9 @@ export const fade = () => (
         {baseChildren.props.children}
     </Carousel>
 );
+
+export const draggeableThumbs = () => (
+    <Carousel {...getConfigurableProps()} draggeableThumbs={true}>
+        {baseChildren.props.children}
+    </Carousel>
+);
